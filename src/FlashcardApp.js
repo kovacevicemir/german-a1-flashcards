@@ -10,18 +10,6 @@ export default function FlashcardApp() {
   const [cardCounter, setCardCounter] = useState(0);
   const [cardHistory, setCardHistory] = useState([]);
 
-  // Load CSV file
-  useEffect(() => {
-    Papa.parse("/flashcards.csv", {
-      download: true,
-      header: true,
-      complete: (result) => {
-        setData(result.data);
-        pickRandom(result.data);
-      },
-    });
-  }, []);
-
   const pickRandom = useCallback((arr = data) => {
     console.log("this is data: ", data)
     if (arr.length === 0) return;
@@ -36,6 +24,19 @@ export default function FlashcardApp() {
     setCurrent(random);
     setShowAnswer(false);
   }, [data, current]);
+
+    // Load CSV file
+  useEffect(() => {
+    Papa.parse("/flashcards.csv", {
+      download: true,
+      header: true,
+      complete: (result) => {
+        setData(result.data);
+        pickRandom(result.data);
+      },
+    });
+  }, [pickRandom]);
+
 
   const goBackToPrevious = useCallback(() => {
     if (cardHistory.length > 0) {
