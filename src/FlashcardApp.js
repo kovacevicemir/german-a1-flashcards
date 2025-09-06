@@ -17,7 +17,7 @@ export default function FlashcardApp() {
     
     // Add current card to history before changing to new one
     if (current !== null) {
-      setCardHistory(prev => [current, ...prev.slice(0, 9)]); // Keep last 10 cards
+      setCardHistory(prev => [current, ...prev.slice(0, 9)]); // Keep last 10 cards 
       setCardCounter(prev => prev + 1);
     }
     
