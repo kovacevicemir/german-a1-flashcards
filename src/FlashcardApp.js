@@ -10,20 +10,26 @@ export default function FlashcardApp() {
   const [cardCounter, setCardCounter] = useState(0);
   const [cardHistory, setCardHistory] = useState([]);
 
-  const pickRandom = useCallback((arr = data) => {
+  const pickRandom = useCallback((arr = data, addToHistory = true) => {
     console.log("this is data: ", data)
     if (arr.length === 0) return;
     const random = arr[Math.floor(Math.random() * arr.length)];
     
     // Add current card to history before changing to new one
-    if (current !== null) {
-      setCardHistory(prev => [current, ...prev.slice(0, 9)]); // Keep last 10 cards 
-      setCardCounter(prev => prev + 1);
+    if (addToHistory) {
+      setCurrent(prevCurrent => {
+        if (prevCurrent !== null) {
+          setCardHistory(prev => [prevCurrent, ...prev.slice(0, 9)]); // Keep last 10 cards 
+          setCardCounter(prev => prev + 1);
+        }
+        return random;
+      });
+    } else {
+      setCurrent(random);
     }
     
-    setCurrent(random);
     setShowAnswer(false);
-  }, [data, current]);
+  }, [data]);
 
     // Load CSV file
   useEffect(() => {
@@ -32,10 +38,14 @@ export default function FlashcardApp() {
       header: true,
       complete: (result) => {
         setData(result.data);
-        pickRandom(result.data);
+        if (result.data.length > 0) {
+          const random = result.data[Math.floor(Math.random() * result.data.length)];
+          setCurrent(random);
+          setShowAnswer(false);
+        }
       },
     });
-  }, [pickRandom]);
+  }, []); // Empty dependency array to only run once
 
 
   const goBackToPrevious = useCallback(() => {
